@@ -7,7 +7,7 @@ Requires=docker.service
 
 [Service]
 Restart=always
-TimeoutStartSec=0
+TimeoutStartSec=5min
 
 EnvironmentFile=/etc/environment
 
@@ -42,7 +42,7 @@ ExecStart=/bin/sh -c "exec /usr/bin/docker run -d \
     -dns-port=53 \
     -bind=$COREOS_PUBLIC_IPV4 \
     -bootstrap-expect $(fleetctl list-machines --no-legend | wc -l) \
-    $(fleetctl list-machines | awk '/consul_role=server/{print \"-retry-join \" $2}') "
+    $(fleetctl list-machines | awk '/consul_role=server/{print \"-join \" $2}') "
 
 
 ExecStop=/usr/bin/docker stop %p

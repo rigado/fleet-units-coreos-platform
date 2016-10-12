@@ -15,9 +15,9 @@ ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm %p
 ExecStartPre=/usr/bin/docker pull consul:0.7.0
 
-ExecStart=/bin/sh -c "exec /usr/bin/docker run -d \
-    --name %p \
-    --hostname %H \
+ExecStart=/usr/bin/docker run \
+    --name consul-server \
+    --hostname core-01 \
     --net=host \
     --env SERVICE_8300_NAME=consul-server-rpc \
     --env SERVICE_8300_TAGS=consul-server-rpc \
@@ -31,7 +31,6 @@ ExecStart=/bin/sh -c "exec /usr/bin/docker run -d \
     --env SERVICE_8500_TAGS=http \
     --env SERVICE_8600_NAME=consul-dns \
     --env SERVICE_8600_TAGS=dns \
-    --env CONSUL_LOCAL_CONFIG={"skip_leave_on_interrupt":true} \
     --env CONSUL_ALLOW_PRIVILEGED_PORTS= \
     --volume /var/run/docker.sock:/var/run/docker.sock \
     -p 8400:8400 \
@@ -42,8 +41,7 @@ ExecStart=/bin/sh -c "exec /usr/bin/docker run -d \
     -dns-port=53 \
     -bind=$COREOS_PUBLIC_IPV4 \
     -bootstrap-expect $(fleetctl list-machines --no-legend | wc -l) \
-    $(fleetctl list-machines | awk '/consul_role=server/{print \"-join \" $2}') "
-
+    $(fleetctl list-machines | awk '/consul_role=server/{print "-join " $2}')
 
 ExecStop=/usr/bin/docker stop %p
 SyslogIdentifier=%p

@@ -34,6 +34,9 @@ ExecStart=/bin/sh -c "exec /usr/bin/docker run -d \
     --env CONSUL_LOCAL_CONFIG={"skip_leave_on_interrupt":true} \
     --env CONSUL_ALLOW_PRIVILEGED_PORTS= \
     --volume /var/run/docker.sock:/var/run/docker.sock \
+    -p 8400:8400 \
+    -p 8500:8500/tcp \
+    -p 8600:53/udp \
     consul:0.7.0 \
     agent -server \
     -dns-port=53 \
